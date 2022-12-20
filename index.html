@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Media Sharing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Media Sharing</h1>
+  <form id="upload-form" method="POST" enctype="multipart/form-data">
+    <label for="file">Choose a file:</label><br>
+    <input type="file" id="file" name="file"><br>
+    <button type="submit">Upload</button>
+  </form>
+  <div id="media-list"></div>
+  <script>const form = document.getElementById("upload-form");
+const mediaList = document.getElementById("media-list");
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const file = form.elements.file.files[0];
+  const formData = new FormData();
+  formData.append("file", file);
+
+  fetch("/upload", {
+    method: "POST",
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      const type = data.type;
+      const url = data.url;
+      const element = document.createElement(type);
+      element.src = url;
+      element.controls = true;
+      element.classList.add("media");
+      mediaList.appendChild(element);
+    });
+});
+</script>
+  <style>
+  body {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: #ff0000;
+}
+
+form {
+  margin: 20px 0;
+}
+
+#media-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#media-list .media {
+  width: 300px;
+  margin: 10px;
+  text-align: center;
+}
+
+#media-list img,
+#media-list audio,
+#media-list video {
+  width: 100%;
+  height: auto;
+}
+
+#media-list h2 {
+  font-size: 1.2em;
+  margin: 5px 0;
+}
+
+  </style>
+</body>
+</html>
